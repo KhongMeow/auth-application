@@ -5,6 +5,8 @@ import { PermissionsModule } from './permissions/permissions.module';
 import { RolePermissionsModule } from './role-permissions/role-permissions.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { IdentityModule } from './identity/identity.module';
+import { GlobalModule } from './global/global.module';
 
 @Module({
   imports: [
@@ -23,10 +25,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         synchronize: true,
       }),
     }),
+    GlobalModule,
     UsersModule,
     RolesModule,
     PermissionsModule,
-    RolePermissionsModule
+    RolePermissionsModule,
+    IdentityModule
   ],
 })
 export class AppModule {}

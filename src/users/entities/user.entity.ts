@@ -1,6 +1,7 @@
 import { Role } from "src/roles/entities/role.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;

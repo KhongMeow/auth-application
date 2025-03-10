@@ -4,10 +4,14 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { Repository } from 'typeorm';
+import { GlobalService } from 'src/global/global.service';
 
 @Injectable()
 export class RolesService {
-  constructor(@InjectRepository(Role) private readonly rolesReposotory: Repository<Role>) {}
+  constructor(
+    private readonly globalService: GlobalService,
+    @InjectRepository(Role) private readonly rolesReposotory: Repository<Role>
+  ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     try {
@@ -15,7 +19,7 @@ export class RolesService {
 
       const role = new Role();
       role.name = createRoleDto.name;
-      role.slug = await this.convertToSlug(createRoleDto.name);
+      role.slug = await this.globalService.convertToSlug(createRoleDto.name);
 
       return await this.rolesReposotory.save(role);
     } catch (error) {
@@ -64,14 +68,30 @@ export class RolesService {
     }
   }
 
+  async findOneBySlug(slug: string): Promise<Role> {
+    try {
+      const role = await this.rolesReposotory.findOne({
+        where: { slug },
+      });
+
+      if (!role) {
+        throw new NotFoundException(`Role with slug ${slug} is not found`);
+      }
+
+      return role;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async update(id: number, updateRoleDto: UpdateRoleDto): Promise<Role> {
     try {
       if (updateRoleDto.name) {
+        const role = await this.findOne(id);
         await this.isExistRole(updateRoleDto.name);
 
-        const role = new Role();
         role.name = updateRoleDto.name;
-        role.slug = await this.convertToSlug(updateRoleDto.name);
+        role.slug = await this.globalService.convertToSlug(updateRoleDto.name);
 
         return await this.rolesReposotory.save(role);
       } else {
@@ -105,12 +125,12 @@ export class RolesService {
     }
   }
 
-  private async isExistRole(name: string): Promise<void> {
+  async isExistRole(name: string): Promise<void> {
     try {
       const role = await this.rolesReposotory.findOne({
         where: [
           { name },
-          { slug: await this.convertToSlug(name) }
+          { slug: await this.globalService.convertToSlug(name) }
         ],
       })
   
@@ -120,9 +140,5 @@ export class RolesService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
-  }
-
-  private async convertToSlug(name: string): Promise<string> {
-    return name.toLowerCase().replace(' ', '-');
   }
 }
