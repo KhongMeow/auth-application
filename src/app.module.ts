@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IdentityModule } from './identity/identity.module';
 import { GlobalModule } from './global/global.module';
+import { MailModule } from './mails/mail.module';
+import { SetupModule } from './setup/setup.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { GlobalModule } from './global/global.module';
       }),
     }),
     GlobalModule,
+    MailModule,
+    SetupModule,
     UsersModule,
     RolesModule,
     PermissionsModule,

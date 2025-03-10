@@ -3,18 +3,19 @@ import { RolePermissionsService } from './role-permissions.service';
 import { RolePermissionsController } from './role-permissions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RolePermission } from './entities/role-permission.entity';
-import { RolesService } from 'src/roles/roles.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
-import { GlobalService } from 'src/global/global.service';
-import { Role } from 'src/roles/entities/role.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
+import { GlobalModule } from 'src/global/global.module';
+import { RolesModule } from 'src/roles/roles.module';
+import { PermissionsModule } from 'src/permissions/permissions.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RolePermission, Role, Permission]),
+    TypeOrmModule.forFeature([RolePermission]),
+    GlobalModule,
+    RolesModule,
+    PermissionsModule
   ],
   controllers: [RolePermissionsController],
-  providers: [RolePermissionsService, GlobalService, RolesService, PermissionsService],
+  providers: [RolePermissionsService],
   exports: [RolePermissionsService]
 })
 export class RolePermissionsModule {}
