@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,11 +23,23 @@ export class RolesService {
     }
   }
 
-  async findAll(): Promise<Role[]> {
+  async findAll(page?: number, limit?: number, order?: string, direction?: string): Promise<Role[]> {
     try {
+      const skip = page && limit ? (page - 1) * limit : undefined;
+      const take = limit ? limit : undefined;
+
       const roles = await this.rolesReposotory.find({
         relations: ['users'],
+        skip,
+        take,
+        order: {
+          [order ? order : 'id']: direction ? direction : 'ASC',
+        }
       });
+
+      if (roles.length === 0) {
+        throw new NotFoundException('Roles is empty');
+      }
 
       return roles;
     } catch (error) {
@@ -43,7 +55,7 @@ export class RolesService {
       });
 
       if (!role) {
-        throw new ConflictException(`Role with id ${id} is not found`);
+        throw new NotFoundException(`Role with id ${id} is not found`);
       }
 
       return role;
@@ -70,7 +82,7 @@ export class RolesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ status: number, message: string }> {
     try {
       const role = await this.findOne(id);
 
