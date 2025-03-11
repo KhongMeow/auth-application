@@ -33,7 +33,7 @@ export class PermissionsService {
       const take = limit ? limit : undefined;
 
       const permissions = await this.permissionsRepository.find({
-        relations: ['rolePermissions'],
+        relations: ['rolePermissions.role'],
         skip,
         take,
         order: {
@@ -55,7 +55,7 @@ export class PermissionsService {
     try {
       const permission = await this.permissionsRepository.findOne({
         where: { id },
-        relations: ['rolePermissions'],
+        relations: ['rolePermissions.role'],
       });
 
       if (!permission) {

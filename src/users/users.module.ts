@@ -10,10 +10,11 @@ import { HashingService } from 'src/identity/hashing/hashing.service';
 import { BcryptService } from 'src/identity/hashing/bcrypt.service';
 import { RolesModule } from 'src/roles/roles.module';
 import { MailService } from 'src/mails/mail.service';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RolesModule,

@@ -33,7 +33,7 @@ export class RolesService {
       const take = limit ? limit : undefined;
 
       const roles = await this.rolesReposotory.find({
-        relations: ['users'],
+        relations: ['users', 'rolePermissions.permission'],
         skip,
         take,
         order: {
@@ -55,7 +55,7 @@ export class RolesService {
     try {
       const role = await this.rolesReposotory.findOne({
         where: { id },
-        relations: ['users'],
+        relations: ['users', 'rolePermissions.permission'],
       });
 
       if (!role) {
