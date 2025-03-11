@@ -109,7 +109,7 @@ export class AuthenticationService {
           { username: signInDto.usernameOrEmail },
           { email: signInDto.usernameOrEmail },
         ],
-        relations: ['role', 'balance'],
+        relations: ['role'],
       });
 
       if (!user) {

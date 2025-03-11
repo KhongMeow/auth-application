@@ -3,10 +3,12 @@ import { IsEmail, IsNotEmpty, IsNumber, IsString, Matches, MinLength } from "cla
 
 export class CreateUserDto {
   @IsNotEmpty()
+  @MinLength(2)
   @IsString()
   fullname: string;
   
   @IsNotEmpty()
+  @MinLength(2)
   @IsString()
   @Matches(/^[a-z0-9-]*$/, {
     message: 'Username can only contain letters, numbers, and dash',

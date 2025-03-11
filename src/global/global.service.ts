@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadGatewayException, ConflictException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GlobalService {

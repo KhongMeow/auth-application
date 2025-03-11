@@ -2,10 +2,12 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
 
 export class SignUpDto {
   @IsNotEmpty()
+  @MinLength(2)
   @IsString()
   fullname: string;
 
   @IsNotEmpty()
+  @MinLength(2)
   @IsString()
   @Matches(/^[a-z0-9-]*$/, {
     message: 'Username can only contain letters, numbers, and dash',
