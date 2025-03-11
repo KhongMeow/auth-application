@@ -136,6 +136,8 @@ export class AuthenticationService {
 
       if (isTokenValid) {
         await this.refreshTokenIdsStorage.invalidate(userId);
+        await this.redis.del(`accessToken:${userId}`);
+        await this.redis.set(`blacklist:${userId}`, 'true', 'EX', this.jwtConfiguration.accessTokenTtl);
         return { message: 'User signed out' };
       } else {
         throw new BadRequestException('User is not signed in');
@@ -163,7 +165,9 @@ export class AuthenticationService {
     ]);
 
     await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
-
+    await this.redis.set(`accessToken:${user.id}`, accessToken, 'EX', this.jwtConfiguration.accessTokenTtl);
+    await this.redis.del(`blacklist:${user.id}`);
+    
     return {
       accessToken,
       refreshToken
