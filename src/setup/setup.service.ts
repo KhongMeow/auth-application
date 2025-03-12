@@ -31,15 +31,7 @@ export class SetupService {
     ];
 
     for (const role of defaultRoles) {
-      try {
-        await this.rolesService.create(role);
-      } catch (error) {
-        if (error instanceof ConflictException) {
-          console.log(`Role ${role.name} already exists. Skipping...`);
-        } else {
-          throw error;
-        }
-      }
+      await this.rolesService.create(role);
     }
   }
 
@@ -69,15 +61,7 @@ export class SetupService {
     ];
 
     for (const permission of defaultPermissions) {
-      try {
-        await this.permissionsService.create(permission);
-      } catch (error) {
-        if (error instanceof ConflictException) {
-          console.log(`Permission "${permission.name}" already exists. Skipping...`);
-        } else {
-          throw error;
-        }
-      }
+      await this.permissionsService.create(permission);
     }
   }
 
@@ -91,15 +75,7 @@ export class SetupService {
     }));
 
     for (const rolePermission of defaultRolePermissions) {
-      try {
-        await this.rolePermissionsService.create(rolePermission);
-      } catch (error) {
-        if (error instanceof ConflictException) {
-          console.log(`Role-Permission already exists. Skipping...`);
-        } else {
-          throw error;
-        }
-      }
+      await this.rolePermissionsService.create(rolePermission);
     }
   }
 
@@ -114,14 +90,6 @@ export class SetupService {
       roleId: adminRole.id,
     };
 
-    try {
-      await this.usersService.create(defaultUser);
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        console.log(`Default user "${defaultUser.username}" already exists. Skipping...`);
-      } else {
-        throw error;
-      }
-    }
+    await this.usersService.create(defaultUser);
   }
 }

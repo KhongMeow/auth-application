@@ -24,7 +24,7 @@ export class UsersService {
     private readonly mailsService: MailService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const role = await this.rolesService.findOne(createUserDto.roleId);
       await this.isExistUsernameOrEmail(createUserDto.username, createUserDto.email);
@@ -43,7 +43,7 @@ export class UsersService {
     }
   }
 
-  async findAll(page?: number, limit?: number, order?: string, direction?: string) {
+  async findAll(page?: number, limit?: number, order?: string, direction?: string): Promise<User[]> {
     try {
       const skip = page && limit ? (page -1) * limit : undefined;
       const take = limit ?? undefined;
@@ -63,7 +63,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
         where: { id },
@@ -80,7 +80,7 @@ export class UsersService {
     }
   }
 
-  async changeRole(id: number, changeRoleDto: ChangeRoleDto) {
+  async changeRole(id: number, changeRoleDto: ChangeRoleDto): Promise<{ statusCode: number, message: string }> {
     try {
       const user = await this.findOne(id);
       const newRole = await this.rolesService.findOne(changeRoleDto.newRoleId);
@@ -101,31 +101,29 @@ export class UsersService {
     }
   }
 
-  async resetPassword(id: number) {
+  async resetPassword(id: number): Promise<{ statusCode: number, message: string }> {
     try {
       const user = await this.findOne(id);
       const newPassword = await this.generateSecurePassword();
       
-      if (user) {
-        user.password = await this.hashingService.hash(newPassword);
-        await this.usersRepository.save(user);
-        await this.mailsService.sendMail(user.email, "Password Reset", `Your new password is: ${newPassword}`);
+      user.password = await this.hashingService.hash(newPassword);
+      await this.usersRepository.save(user);
+      await this.mailsService.sendMail(user.email, "Password Reset", `Your new password is: ${newPassword}`);
 
-        return {
-          statusCode: 200,
-          message: `Password reset successfully! Please check your email for the new password`
-        };
-      }
+      return {
+        statusCode: 200,
+        message: `Password reset successfully! Please check your email for the new password`
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ statusCode: number, message: string }> {
     try {
       const user = await this.findOne(id);
 
-      await this.usersRepository.softDelete(user);
+      await this.usersRepository.softDelete(id);
 
       return {
         statusCode: 200,
@@ -136,7 +134,7 @@ export class UsersService {
     }
   }
 
-  async isExistUsernameOrEmail(username: string, email: string) {
+  async isExistUsernameOrEmail(username: string, email: string): Promise<void> {
     try {
       const whereByUsername = await this.usersRepository.findOne({
         where: { username },
@@ -162,7 +160,7 @@ export class UsersService {
     }
   }
 
-  private async generateSecurePassword() {
+  private async generateSecurePassword(): Promise<string> {
     return generator.generate({
       length: 16,
       numbers: true,
