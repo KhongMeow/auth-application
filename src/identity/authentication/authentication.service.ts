@@ -194,8 +194,9 @@ export class AuthenticationService {
         issuer: this.jwtConfiguration.issuer,
       });
 
-      const user = await this.usersRepository.findOneByOrFail({
-        id: sub,
+      const user = await this.usersRepository.findOneOrFail({
+        where: { id: sub },
+        relations: ['role'],
       });
 
       const isValid = await this.refreshTokenIdsStorage.validate(
