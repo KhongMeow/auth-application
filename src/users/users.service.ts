@@ -125,7 +125,7 @@ export class UsersService {
     try {
       const user = await this.findOne(id);
 
-      await this.usersRepository.remove(user);
+      await this.usersRepository.softDelete(user);
 
       return {
         statusCode: 200,
