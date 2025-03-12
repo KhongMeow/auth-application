@@ -140,12 +140,10 @@ export class UsersService {
     try {
       const whereByUsername = await this.usersRepository.findOne({
         where: { username },
-        relations: ['role'],
       });
 
       const whereByEmail = await this.usersRepository.findOne({
         where: { email },
-        relations: ['role'],
       });
 
       if (whereByUsername && whereByEmail) {
