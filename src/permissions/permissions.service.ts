@@ -33,7 +33,6 @@ export class PermissionsService {
       const take = limit ? limit : undefined;
 
       const permissions = await this.permissionsRepository.find({
-        relations: ['rolePermissions.role'],
         skip,
         take,
         order: {
@@ -53,10 +52,7 @@ export class PermissionsService {
 
   async findOne(id: number): Promise<Permission> {
     try {
-      const permission = await this.permissionsRepository.findOne({
-        where: { id },
-        relations: ['rolePermissions.role'],
-      });
+      const permission = await this.permissionsRepository.findOneBy({ id });
 
       if (!permission) {
         throw new InternalServerErrorException(`Permission with id ${id} is not found`);
